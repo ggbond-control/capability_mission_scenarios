@@ -1,0 +1,7 @@
+transition_id,from_map,to_map,world_x,world_y,world_z,world_yaw_rad,bidirectional,type
+tp_1,map_000,map_001,2.55496,1.19778,-0.153457,-0.00191128,true,stairs
+tp_2,map_001,map_002,2.97658,3.0094,5.27861,3.0963,true,stairs
+tp_3,map_002,map_003,2.46931,1.39611,5.10316,-0.0230612,true,stairs
+tp_4,map_003,map_004,2.84888,3.00545,10.4284,3.11576,true,stairs
+tp_5,map_004,map_005,3.19017,1.26536,10.23,-0.0188497,true,stairs
+tp_6,map_005,map_006,3.24056,3.09798,15.165,3.11598,true,stairs

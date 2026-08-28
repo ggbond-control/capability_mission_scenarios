@@ -1,0 +1,29 @@
+version: 1
+test_expectations: {robots: 2, tasks: 16, idle_robots: 0, minimum_merged_stops: 0}
+map: {directory: ../../maps/zju2, allow_unknown: false, inflation_radius_m: 0.0}
+output_directory: ../../output/single_map_scenarios/05_many_tasks_few_robots
+planner:
+  coordinate_conflicts: true
+  objective: {maximum_load_weight: 1.5, total_load_weight: 0.1}
+  traversal: {time_step_seconds: 0.1, nominal_speed_mps: 0.7}
+export: {path_thickness: 3, draw_grid: false}
+robots:
+  - {id: response-1, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera, thermal], return_home: true}
+  - {id: response-2, start: {map_id: map_000, grid: [602, 156]}, capabilities: [fire, camera, thermal], return_home: true}
+tasks:
+  - {id: q01, location: {map_id: map_000, grid: [417, 62]}, requirements: [fire], category: fire_suppression, service_seconds: 5, high_priority: true}
+  - {id: q02, location: {map_id: map_000, grid: [390, 316]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: q03, location: {map_id: map_000, grid: [473, 207]}, requirements: [thermal], category: thermal_inspection, service_seconds: 3}
+  - {id: q04, location: {map_id: map_000, grid: [270, 287]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 6}
+  - {id: q05, location: {map_id: map_000, grid: [365, 128]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: q06, location: {map_id: map_000, grid: [384, 220]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: q07, location: {map_id: map_000, grid: [563, 215]}, requirements: [fire], category: fire_suppression, service_seconds: 5}
+  - {id: q08, location: {map_id: map_000, grid: [452, 121]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: q09, location: {map_id: map_000, grid: [513, 157]}, requirements: [thermal, camera], category: thermal_documentation, service_seconds: 5}
+  - {id: q10, location: {map_id: map_000, grid: [333, 259]}, requirements: [fire], category: fire_suppression, service_seconds: 4}
+  - {id: q11, location: {map_id: map_000, grid: [412, 164]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: q12, location: {map_id: map_000, grid: [264, 159]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: q13, location: {map_id: map_000, grid: [418, 262]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 7, high_priority: true}
+  - {id: q14, location: {map_id: map_000, grid: [316, 318]}, requirements: [camera], category: gimbal_photo, service_seconds: 3}
+  - {id: q15, location: {map_id: map_000, grid: [271, 220]}, requirements: [fire], category: fire_suppression, service_seconds: 5}
+  - {id: q16, location: {map_id: map_000, grid: [369, 73]}, requirements: [thermal], category: thermal_inspection, service_seconds: 3}

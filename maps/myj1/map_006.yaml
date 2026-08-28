@@ -1,0 +1,7 @@
+image: map_006.png
+resolution: 0.05
+origin: [-6.29056, -15.598, 0]
+negate: 0
+occupied_thresh: 1
+free_thresh: 0
+mode: scale

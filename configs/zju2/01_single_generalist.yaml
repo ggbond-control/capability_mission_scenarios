@@ -1,0 +1,20 @@
+version: 1
+test_expectations: {robots: 1, tasks: 8, idle_robots: 0, minimum_merged_stops: 1}
+map: {directory: ../../maps/zju2, allow_unknown: false, inflation_radius_m: 0.0}
+output_directory: ../../output/single_map_scenarios/01_single_generalist
+planner:
+  coordinate_conflicts: true
+  objective: {maximum_load_weight: 1.0, total_load_weight: 0.1}
+  traversal: {time_step_seconds: 0.1, nominal_speed_mps: 0.5}
+export: {path_thickness: 3, draw_grid: false}
+robots:
+  - {id: generalist, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera, thermal, delivery], return_home: true}
+tasks:
+  - {id: photo-west, location: {map_id: map_000, grid: [270, 287]}, requirements: [camera], category: gimbal_photo, service_seconds: 3, high_priority: true}
+  - {id: fire-south, location: {map_id: map_000, grid: [417, 62]}, requirements: [fire], category: fire_suppression, service_seconds: 6}
+  - {id: thermal-east, location: {map_id: map_000, grid: [602, 156]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: delivery-north, location: {map_id: map_000, grid: [390, 316]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: document-center, location: {map_id: map_000, grid: [473, 207]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 7}
+  - {id: thermal-west, location: {map_id: map_000, grid: [264, 159]}, requirements: [thermal], category: thermal_inspection, service_seconds: 2}
+  - {id: photo-center, location: {map_id: map_000, grid: [384, 220]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: thermal-center, location: {map_id: map_000, grid: [384, 220]}, requirements: [thermal], category: thermal_inspection, service_seconds: 3}
