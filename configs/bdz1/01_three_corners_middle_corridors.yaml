@@ -1,0 +1,53 @@
+version: 1
+test_expectations: {robots: 3, tasks: 14, idle_robots: 0, minimum_merged_stops: 1}
+
+map:
+  directory: ../../maps/bdz1
+  allow_unknown: false
+  inflation_radius_m: 0.0
+  inscribed_radius_m: 0.20
+  cost_scaling_factor: 10.0
+
+output_directory: ../../output/bdz1/01_three_corners_middle_corridors
+
+planner:
+  # This large real-world raster is used as a throughput benchmark. CBS
+  # coordination remains covered by the smaller zju2 regression scenarios.
+  coordinate_conflicts: false
+  objective:
+    maximum_load_weight: 1.5
+    total_load_weight: 0.1
+  traversal:
+    time_step_seconds: 0.1
+    nominal_speed_mps: 0.8
+    obstacle_cost_weight: 1.0
+    allow_diagonal: true
+    default_transition_seconds: 5.0
+    map_switch_seconds: 2.0
+
+export: {path_thickness: 4, draw_grid: false}
+
+# Three corners of the large single-floor map. Coordinates use the planner's
+# bottom-left grid origin (the source image is top-left based).
+robots:
+  - {id: a-northwest, start: {map_id: bdz1, grid: [100, 1036]}, capabilities: [fire, camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.8}
+  - {id: b-northeast, start: {map_id: bdz1, grid: [2258, 1043]}, capabilities: [camera, thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.7}
+  - {id: c-southwest, start: {map_id: bdz1, grid: [129, 110]}, capabilities: [fire, thermal, delivery], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.9}
+
+# More than ten points along the central east-west corridors. Several points
+# intentionally share a location to exercise multi-task stop merging.
+tasks:
+  - {id: west-fire, location: {map_id: bdz1, grid: [300, 651]}, requirements: [fire], category: fire_suppression, service_seconds: 8, high_priority: true}
+  - {id: west-photo, location: {map_id: bdz1, grid: [300, 651]}, requirements: [camera], category: gimbal_photo, service_seconds: 3}
+  - {id: photo-01, location: {map_id: bdz1, grid: [500, 651]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: thermal-01, location: {map_id: bdz1, grid: [700, 651]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: fire-camera-01, location: {map_id: bdz1, grid: [900, 651]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 6}
+  - {id: delivery-01, location: {map_id: bdz1, grid: [1100, 651]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: photo-02, location: {map_id: bdz1, grid: [1300, 651]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: thermal-02, location: {map_id: bdz1, grid: [1500, 651]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: fire-02, location: {map_id: bdz1, grid: [1700, 651]}, requirements: [fire], category: fire_suppression, service_seconds: 7}
+  - {id: photo-03, location: {map_id: bdz1, grid: [1900, 651]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: thermal-03, location: {map_id: bdz1, grid: [500, 351]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: fire-delivery, location: {map_id: bdz1, grid: [900, 351]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 6}
+  - {id: photo-04, location: {map_id: bdz1, grid: [1300, 351]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: thermal-photo, location: {map_id: bdz1, grid: [1700, 351]}, requirements: [thermal, camera], category: thermal_documentation, service_seconds: 5, high_priority: true}

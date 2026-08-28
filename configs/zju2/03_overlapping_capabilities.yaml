@@ -8,9 +8,9 @@ planner:
   traversal: {time_step_seconds: 0.1, nominal_speed_mps: 0.5}
 export: {path_thickness: 3, draw_grid: false}
 robots:
-  - {id: alpha, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera], return_home: true}
-  - {id: beta, start: {map_id: map_000, grid: [602, 156]}, capabilities: [camera, thermal], return_home: true}
-  - {id: gamma, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire, camera, thermal], return_home: true}
+  - {id: alpha, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: beta, start: {map_id: map_000, grid: [602, 156]}, capabilities: [camera, thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: gamma, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire, camera, thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
 tasks:
   - {id: t01, location: {map_id: map_000, grid: [417, 62]}, requirements: [fire], category: fire_suppression, service_seconds: 7}
   - {id: t02, location: {map_id: map_000, grid: [270, 287]}, requirements: [thermal], category: thermal_inspection, service_seconds: 5}

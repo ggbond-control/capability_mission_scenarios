@@ -8,12 +8,12 @@ planner:
   traversal: {time_step_seconds: 0.1, nominal_speed_mps: 0.5}
 export: {path_thickness: 3, draw_grid: false}
 robots:
-  - {id: fire-near, start: {map_id: map_000, grid: [417, 62]}, capabilities: [fire], return_home: true}
-  - {id: fire-far, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire], return_home: true}
-  - {id: camera-near, start: {map_id: map_000, grid: [602, 156]}, capabilities: [camera], return_home: true}
-  - {id: camera-far, start: {map_id: map_000, grid: [270, 287]}, capabilities: [camera], return_home: true}
-  - {id: thermal-near, start: {map_id: map_000, grid: [333, 259]}, capabilities: [thermal], return_home: true}
-  - {id: reserve, start: {map_id: map_000, grid: [310, 191]}, capabilities: [delivery], return_home: true}
+  - {id: fire-near, start: {map_id: map_000, grid: [417, 62]}, capabilities: [fire], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: fire-far, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: camera-near, start: {map_id: map_000, grid: [602, 156]}, capabilities: [camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: camera-far, start: {map_id: map_000, grid: [270, 287]}, capabilities: [camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: thermal-near, start: {map_id: map_000, grid: [333, 259]}, capabilities: [thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: reserve, start: {map_id: map_000, grid: [310, 191]}, capabilities: [delivery], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
 tasks:
   - {id: only-fire, location: {map_id: map_000, grid: [452, 121]}, requirements: [fire], category: fire_suppression, service_seconds: 5}
   - {id: only-photo, location: {map_id: map_000, grid: [563, 215]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}

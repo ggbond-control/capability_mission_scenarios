@@ -8,10 +8,10 @@ planner:
   traversal: {time_step_seconds: 0.1, nominal_speed_mps: 0.5}
 export: {path_thickness: 4, draw_grid: false}
 robots:
-  - {id: fire-camera, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera], return_home: true}
-  - {id: thermal-camera, start: {map_id: map_000, grid: [602, 156]}, capabilities: [thermal, camera], return_home: true}
-  - {id: fire-thermal, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire, thermal], return_home: true}
-  - {id: universal, start: {map_id: map_000, grid: [417, 62]}, capabilities: [fire, camera, thermal], return_home: true}
+  - {id: fire-camera, start: {map_id: map_000, grid: [310, 191]}, capabilities: [fire, camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: thermal-camera, start: {map_id: map_000, grid: [602, 156]}, capabilities: [thermal, camera], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: fire-thermal, start: {map_id: map_000, grid: [390, 316]}, capabilities: [fire, thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
+  - {id: universal, start: {map_id: map_000, grid: [417, 62]}, capabilities: [fire, camera, thermal], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00}
 tasks:
   - {id: site-a-fire, location: {map_id: map_000, grid: [270, 287]}, requirements: [fire], category: fire_suppression, service_seconds: 6, high_priority: true}
   - {id: site-a-photo, location: {map_id: map_000, grid: [270, 287]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
