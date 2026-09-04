@@ -1,0 +1,101 @@
+version: 1
+test_expectations: {robots: 5, tasks: 60, idle_robots: 0, minimum_merged_stops: 0}
+
+map:
+  directory: ../../maps/bdz1
+  allow_unknown: false
+  inflation_radius_m: 0.0
+  inscribed_radius_m: 0.20
+  cost_scaling_factor: 10.0
+
+output_directory: ../../output/bdz1/05_five_robot_types_60_points
+
+planner:
+  coordinate_conflicts: true
+  objective:
+    maximum_load_weight: 1.5
+    total_load_weight: 0.1
+    multi_start: 1
+    normalize: false
+    time_budget_seconds: 10.0
+  traversal:
+    time_step_seconds: 0.1
+    nominal_speed_mps: 0.8
+    obstacle_cost_weight: 1.0
+    allow_diagonal: true
+    downsample_costmap: true
+    coarse_search_factor: 4
+
+export: {path_thickness: 3, draw_grid: false}
+
+# Five deliberately different capability profiles.
+robots:
+  - {id: fire-camera-gas, start: {map_id: bdz1, grid: [100, 1036]}, capabilities: [fire, camera, gas], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.8}
+  - {id: camera-thermal-delivery, start: {map_id: bdz1, grid: [2258, 1043]}, capabilities: [camera, thermal, delivery], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.8}
+  - {id: fire-thermal-delivery, start: {map_id: bdz1, grid: [129, 110]}, capabilities: [fire, thermal, delivery], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.9}
+  - {id: fire-delivery-gas, start: {map_id: bdz1, grid: [180, 1036]}, capabilities: [fire, delivery, gas], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.8}
+  - {id: camera-thermal-gas, start: {map_id: bdz1, grid: [2050, 1043]}, capabilities: [camera, thermal, gas], return_home: true, clearance_radius_m: 0.01, safety_margin_m: 0.00, nominal_speed_mps: 0.8}
+
+# Fifty unique points distributed across four east-west corridors. Requirements cycle
+# through twenty task types; every type is represented at least twice.
+tasks:
+  - {id: t01-fire, location: {map_id: bdz1, grid: [300, 1036]}, requirements: [fire], category: fire_suppression, service_seconds: 6, high_priority: true}
+  - {id: t02-photo, location: {map_id: bdz1, grid: [370, 1036]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: t03-thermal, location: {map_id: bdz1, grid: [440, 1036]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: t04-delivery, location: {map_id: bdz1, grid: [510, 1036]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: t05-gas, location: {map_id: bdz1, grid: [580, 1036]}, requirements: [gas], category: gas_detection, service_seconds: 6}
+  - {id: t06-fire-camera, location: {map_id: bdz1, grid: [650, 1036]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 5, high_priority: true}
+  - {id: t07-camera-thermal, location: {map_id: bdz1, grid: [720, 1036]}, requirements: [camera, thermal], category: thermal_documentation, service_seconds: 6}
+  - {id: t08-thermal-delivery, location: {map_id: bdz1, grid: [790, 1036]}, requirements: [thermal, delivery], category: cold_chain_delivery, service_seconds: 5}
+  - {id: t09-fire-delivery, location: {map_id: bdz1, grid: [860, 1036]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 7}
+  - {id: t10-delivery-gas, location: {map_id: bdz1, grid: [930, 1036]}, requirements: [delivery, gas], category: gas_equipment_delivery, service_seconds: 9, high_priority: true}
+  - {id: t11-fire-gas, location: {map_id: bdz1, grid: [1000, 1036]}, requirements: [fire, gas], category: combustion_gas_check, service_seconds: 8}
+  - {id: t12-camera-gas, location: {map_id: bdz1, grid: [1070, 1036]}, requirements: [camera, gas], category: gas_documentation, service_seconds: 3}
+  - {id: t13-thermal-gas, location: {map_id: bdz1, grid: [1140, 1036]}, requirements: [thermal, gas], category: thermal_gas_survey, service_seconds: 4}
+  - {id: t14-camera-delivery, location: {map_id: bdz1, grid: [1210, 651]}, requirements: [camera, delivery], category: delivery_verification, service_seconds: 5}
+  - {id: t15-fire-thermal, location: {map_id: bdz1, grid: [1280, 651]}, requirements: [fire, thermal], category: heat_hazard_assessment, service_seconds: 6}
+  - {id: t16-smoke-survey, location: {map_id: bdz1, grid: [1350, 651]}, requirements: [fire, camera], category: smoke_visual_survey, service_seconds: 5}
+  - {id: t17-inventory-scan, location: {map_id: bdz1, grid: [1420, 651]}, requirements: [camera, delivery], category: inventory_scan, service_seconds: 6}
+  - {id: t18-hot-supply, location: {map_id: bdz1, grid: [1490, 651]}, requirements: [thermal, delivery], category: hot_zone_supply, service_seconds: 5}
+  - {id: t19-gas-logistics, location: {map_id: bdz1, grid: [1560, 651]}, requirements: [delivery, gas], category: gas_sensor_logistics, service_seconds: 7}
+  - {id: t20-hazard-report, location: {map_id: bdz1, grid: [1630, 651]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 9}
+  - {id: t21-fire, location: {map_id: bdz1, grid: [1700, 651]}, requirements: [fire], category: fire_suppression, service_seconds: 6}
+  - {id: t22-photo, location: {map_id: bdz1, grid: [1770, 651]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: t23-thermal, location: {map_id: bdz1, grid: [1840, 651]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: t24-delivery, location: {map_id: bdz1, grid: [1910, 651]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: t25-fire-camera, location: {map_id: bdz1, grid: [1980, 651]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 6}
+  - {id: t26-thermal-photo, location: {map_id: bdz1, grid: [300, 351]}, requirements: [thermal, camera], category: thermal_documentation, service_seconds: 5}
+  - {id: t27-fire-delivery, location: {map_id: bdz1, grid: [370, 351]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 6}
+  - {id: t28-thermal-delivery, location: {map_id: bdz1, grid: [440, 351]}, requirements: [thermal, delivery], category: cold_chain_delivery, service_seconds: 5}
+  - {id: t29-fire-thermal, location: {map_id: bdz1, grid: [510, 351]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 7}
+  - {id: t30-hazard-report, location: {map_id: bdz1, grid: [580, 351]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 9, high_priority: true}
+  - {id: t31-fire, location: {map_id: bdz1, grid: [650, 351]}, requirements: [fire], category: fire_suppression, service_seconds: 8}
+  - {id: t32-photo, location: {map_id: bdz1, grid: [720, 351]}, requirements: [camera], category: gimbal_photo, service_seconds: 3}
+  - {id: t33-thermal, location: {map_id: bdz1, grid: [790, 351]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: t34-delivery, location: {map_id: bdz1, grid: [860, 351]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: t35-fire-camera, location: {map_id: bdz1, grid: [930, 351]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 6}
+  - {id: t36-thermal-photo, location: {map_id: bdz1, grid: [1000, 351]}, requirements: [thermal, camera], category: thermal_documentation, service_seconds: 5}
+  - {id: t37-fire-delivery, location: {map_id: bdz1, grid: [1070, 351]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 6}
+  - {id: t38-thermal-delivery, location: {map_id: bdz1, grid: [1140, 351]}, requirements: [thermal, delivery], category: cold_chain_delivery, service_seconds: 5}
+  - {id: t39-fire-thermal, location: {map_id: bdz1, grid: [300, 1020]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 7}
+  - {id: t40-hazard-report, location: {map_id: bdz1, grid: [400, 1020]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 9}
+  - {id: t41-fire, location: {map_id: bdz1, grid: [500, 1020]}, requirements: [fire], category: fire_suppression, service_seconds: 6}
+  - {id: t42-photo, location: {map_id: bdz1, grid: [600, 1020]}, requirements: [camera], category: gimbal_photo, service_seconds: 2}
+  - {id: t43-thermal, location: {map_id: bdz1, grid: [700, 1020]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: t44-delivery, location: {map_id: bdz1, grid: [800, 1020]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: t45-fire-camera, location: {map_id: bdz1, grid: [900, 1020]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 6}
+  - {id: t46-thermal-photo, location: {map_id: bdz1, grid: [1000, 1020]}, requirements: [thermal, camera], category: thermal_documentation, service_seconds: 5}
+  - {id: t47-fire-delivery, location: {map_id: bdz1, grid: [1100, 1020]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 6}
+  - {id: t48-thermal-delivery, location: {map_id: bdz1, grid: [1200, 1020]}, requirements: [thermal, delivery], category: cold_chain_delivery, service_seconds: 5}
+  - {id: t49-fire-thermal, location: {map_id: bdz1, grid: [1300, 1020]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 7}
+  - {id: t50-hazard-report, location: {map_id: bdz1, grid: [1400, 1020]}, requirements: [fire, thermal], category: hazard_assessment, service_seconds: 9}
+  - {id: t51-fire, location: {map_id: bdz1, grid: [300, 1036]}, requirements: [fire], category: fire_suppression, service_seconds: 6}
+  - {id: t52-photo, location: {map_id: bdz1, grid: [370, 1036]}, requirements: [camera], category: gimbal_photo, service_seconds: 3}
+  - {id: t53-thermal, location: {map_id: bdz1, grid: [440, 1036]}, requirements: [thermal], category: thermal_inspection, service_seconds: 4}
+  - {id: t54-delivery, location: {map_id: bdz1, grid: [1210, 651]}, requirements: [delivery], category: material_delivery, service_seconds: 5}
+  - {id: t55-gas, location: {map_id: bdz1, grid: [1280, 651]}, requirements: [gas], category: gas_detection, service_seconds: 6}
+  - {id: t56-fire-camera, location: {map_id: bdz1, grid: [300, 351]}, requirements: [fire, camera], category: fire_documentation, service_seconds: 5}
+  - {id: t57-camera-thermal, location: {map_id: bdz1, grid: [370, 351]}, requirements: [camera, thermal], category: thermal_documentation, service_seconds: 6}
+  - {id: t58-thermal-delivery, location: {map_id: bdz1, grid: [300, 1020]}, requirements: [thermal, delivery], category: cold_chain_delivery, service_seconds: 5}
+  - {id: t59-fire-delivery, location: {map_id: bdz1, grid: [400, 1020]}, requirements: [fire, delivery], category: emergency_supply, service_seconds: 7}
+  - {id: t60-delivery-gas, location: {map_id: bdz1, grid: [500, 1020]}, requirements: [delivery, gas], category: gas_equipment_delivery, service_seconds: 9}

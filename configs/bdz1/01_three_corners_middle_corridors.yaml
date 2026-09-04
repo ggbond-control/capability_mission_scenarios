@@ -13,7 +13,7 @@ output_directory: ../../output/bdz1/01_three_corners_middle_corridors
 planner:
   # This large real-world raster is used as a throughput benchmark. CBS
   # coordination remains covered by the smaller zju2 regression scenarios.
-  coordinate_conflicts: false
+  coordinate_conflicts: true
   objective:
     maximum_load_weight: 1.5
     total_load_weight: 0.1
@@ -22,8 +22,8 @@ planner:
     nominal_speed_mps: 0.8
     obstacle_cost_weight: 1.0
     allow_diagonal: true
-    default_transition_seconds: 5.0
-    map_switch_seconds: 2.0
+    downsample_costmap: true
+    coarse_search_factor: 4
 
 export: {path_thickness: 4, draw_grid: false}
 

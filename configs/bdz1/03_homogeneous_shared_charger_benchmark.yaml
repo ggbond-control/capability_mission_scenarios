@@ -12,7 +12,7 @@ map:
 output_directory: ../../output/bdz1/03_homogeneous_shared_charger_benchmark
 
 planner:
-  coordinate_conflicts: false
+  coordinate_conflicts: true
   objective:
     maximum_load_weight: 1.0
     total_load_weight: 0.05
@@ -22,7 +22,7 @@ planner:
     obstacle_cost_weight: 1.0
     allow_diagonal: true
     downsample_costmap: true
-    coarse_search_factor: 2
+    coarse_search_factor: 4
 
 export: {path_thickness: 4, draw_grid: false}
 
