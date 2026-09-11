@@ -1,4 +1,2 @@
+.capability_mission_cache/
 output/
-build/
-*.swp
-tmp/

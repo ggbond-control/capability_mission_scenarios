@@ -1,6 +1,3 @@
-version: 1
-
-# Paths are resolved relative to this configuration file.
 map:
   directory: ../../maps/myj1
   allow_unknown: false
@@ -8,7 +5,7 @@ map:
   inscribed_radius_m: 0.25
   cost_scaling_factor: 10.0
 
-output_directory: ../../output/offline_multi_map
+output_directory: ../../output/myj1
 
 planner:
   coordinate_conflicts: true
@@ -32,60 +29,85 @@ planner:
 export:
   path_thickness: 3
   draw_grid: false
+  navigation_checkpoint_types: [start, task, holding, finish]
 
 robots:
-  - id: a
-    start: {map_id: map_000, grid: [409, 392]}
-    capabilities: [fire, camera, stairs]
-    return_home: true
-    clearance_radius_m: 0.01
-    safety_margin_m: 0.00
-    nominal_speed_mps: 0.5
-  - id: b
-    start: {map_id: map_000, grid: [352, 636]}
-    capabilities: [camera, thermal, stairs]
-    return_home: true
-    clearance_radius_m: 0.01
-    safety_margin_m: 0.00
-    nominal_speed_mps: 0.5
-  - id: c
-    start: {map_id: map_000, grid: [576, 489]}
-    capabilities: [fire, camera, thermal, stairs]
-    return_home: true
-    clearance_radius_m: 0.01
-    safety_margin_m: 0.00
-    nominal_speed_mps: 0.5
+- id: a
+  start:
+    map_id: map_000
+    local_xy: [-2.675, -3.275]
+  capabilities: [fire, camera, stairs]
+  return_home:
+    map_id: map_000
+    local_xy: [-2.675, -3.275]
+  clearance_radius_m: 0.01
+  safety_margin_m: 0.0
+  nominal_speed_mps: 0.5
+- id: b
+  start:
+    map_id: map_000
+    local_xy: [-5.525, 8.925]
+  capabilities: [camera, thermal, stairs]
+  return_home:
+    map_id: map_000
+    local_xy: [-5.525, 8.925]
+  clearance_radius_m: 0.01
+  safety_margin_m: 0.0
+  nominal_speed_mps: 0.5
+- id: c
+  start:
+    map_id: map_000
+    local_xy: [5.675, 1.575]
+  capabilities: [fire, camera, thermal, stairs]
+  return_home:
+    map_id: map_000
+    local_xy: [5.675, 1.575]
+  clearance_radius_m: 0.01
+  safety_margin_m: 0.0
+  nominal_speed_mps: 0.5
 
 tasks:
-  - id: T1-photo
-    location: {map_id: map_000, grid: [278, 481]}
-    requirements: [camera]
-    category: gimbal_photo
-    service_seconds: 2
-    high_priority: true
-  - id: T2-fire
-    location: {map_id: map_000, grid: [278, 481]}
-    requirements: [fire]
-    category: fire_suppression
-    service_seconds: 4
-  - id: T3-thermal
-    location: {map_id: map_003, grid: [358, 336]}
-    requirements: [thermal]
-    category: thermal_inspection
-    service_seconds: 3
-  - id: T4-photo
-    location: {map_id: map_003, grid: [186, 364]}
-    requirements: [camera]
-    category: gimbal_photo
-    service_seconds: 2
-  - id: T5-fire
-    location: {map_id: map_006, grid: [203, 449]}
-    requirements: [fire]
-    category: fire_suppression
-    service_seconds: 4
-    high_priority: true
-  - id: T6-fire-photo
-    location: {map_id: map_006, grid: [419, 363]}
-    requirements: [fire, camera]
-    category: fire_documentation
-    service_seconds: 5
+- id: T1-photo
+  location:
+    map_id: map_000
+    local_xy: [-9.225, 1.175]
+  requirements: [camera]
+  category: gimbal_photo
+  service_seconds: 2
+  high_priority: true
+- id: T2-fire
+  location:
+    map_id: map_000
+    local_xy: [-9.225, 1.175]
+  requirements: [fire]
+  category: fire_suppression
+  service_seconds: 4
+- id: T3-thermal
+  location:
+    map_id: map_003
+    local_xy: [6.9057, 0.4789]
+  requirements: [thermal]
+  category: thermal_inspection
+  service_seconds: 3
+- id: T4-photo
+  location:
+    map_id: map_003
+    local_xy: [-1.6943, 1.8789]
+  requirements: [camera]
+  category: gimbal_photo
+  service_seconds: 2
+- id: T5-fire
+  location:
+    map_id: map_006
+    local_xy: [3.88444, 6.877]
+  requirements: [fire]
+  category: fire_suppression
+  service_seconds: 4
+  high_priority: true
+- id: T6-fire-photo
+  location:
+    map_id: map_006
+    local_xy: [14.68444, 2.577]
+  requirements: [fire, camera]
+  category: fire_documentation
+  service_seconds: 5

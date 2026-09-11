@@ -11,7 +11,7 @@
 maps/zju2/                 zju2 的 Nav2 YAML/PNG
 maps/myj1/                 myj1 的多地图 YAML/PNG/关系/传送点
 configs/zju2/              zju2 的任务与算法回归配置
-configs/myj1.yaml          myj1 的任务与算法配置
+configs/myj1/myj1.yaml     myj1 的任务与算法配置
 ```
 
 该仓库不复制规划器源码。先构建 `capability_mission_planner`，再直接把配置路径
@@ -24,7 +24,7 @@ for config in configs/zju2/*.yaml; do
   "$PLANNER" "$config"
 done
 
-"$PLANNER" configs/myj1.yaml
+"$PLANNER" configs/myj1/myj1.yaml
 ```
 
 结果默认写入本仓库的 `output/`。每次结果包含 `plan.json`、`summary.txt` 和
