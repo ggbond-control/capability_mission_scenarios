@@ -23,6 +23,11 @@ planner:
 export:
   path_thickness: 4
   draw_grid: false
+  animation: true
+  animation_fps: 10
+  animation_speedup: 20.0
+  animation_max_frames: 600
+  animation_width: 1280
 
 robots:
 - id: charger-a
