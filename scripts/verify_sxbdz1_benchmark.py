@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit exported sxbdz1 trajectories, allocations, clearance and all GIF frames.
+"""Audit single-map trajectories, allocations, clearance and all GIF frames.
 
 Run after capability_mission_planner_cli. Dependencies: numpy, opencv-python,
 PyYAML and Pillow. Writes validation.json and validation.txt beside plan.json.
@@ -26,15 +26,18 @@ def main():
     parser.add_argument('config', nargs='?', type=Path,
                         default=ROOT / 'configs/sxbdz1/01_six_robots_80_sites_100_tasks.yaml')
     parser.add_argument('--run-log', type=Path)
+    parser.add_argument('--allow-zero-waits', action='store_true',
+                        help='allow naturally conflict-free configurations (e.g. bdz1/06)')
+    parser.add_argument('--skip-gif', action='store_true', help='audit complete JSON trajectories without decoding GIF')
     args = parser.parse_args()
     config_path = args.config.resolve()
     config = yaml.safe_load(config_path.read_text())
     output = (config_path.parent / config['output_directory']).resolve()
     plan = json.loads((output / 'plan.json').read_text())
-    require(len(plan['maps']) == 1, 'this audit targets the single-map sxbdz1 benchmark')
+    require(len(plan['maps']) == 1, 'this audit requires one map')
     map_info = plan['maps'][0]
     w, h, resolution = map_info['width'], map_info['height'], map_info['resolution']
-    metadata = yaml.safe_load((config_path.parent / config['map']['directory'] / 'map_000.yaml').read_text())
+    metadata = yaml.safe_load((config_path.parent / config['map']['directory'] / (map_info['id'] + '.yaml')).read_text())
     gray = cv2.imread(str(config_path.parent / config['map']['directory'] / metadata['image']), cv2.IMREAD_GRAYSCALE)
     require(gray.shape == (h, w), 'exported dimensions differ from the occupancy map')
     occupancy = (255 - gray.astype(float)) / 255
@@ -43,7 +46,7 @@ def main():
     free = (occupancy <= metadata['free_thresh']).astype(np.uint8)
     clearance = cv2.distanceTransform(free, cv2.DIST_L2, 3) * resolution
     ox, oy, yaw = metadata['origin']
-    require(yaw == 0, 'sxbdz1 audit currently expects zero map origin yaw')
+    require(yaw == 0, 'this audit currently expects zero map origin yaw')
 
     def cell(position):
         if 'grid' in position:
@@ -75,7 +78,7 @@ def main():
         require(np.all((coords[:, 0] >= 0) & (coords[:, 0] < w) &
                        (coords[:, 1] >= 0) & (coords[:, 1] < h)), 'trajectory leaves map bounds')
         values = clearance[h - 1 - coords[:, 1], coords[:, 0]]
-        required_clearance = robot['clearance_radius_m'] + robot['safety_margin_m']
+        required_clearance = robot.get('clearance_radius_m', 0) + robot.get('safety_margin_m', 0)
         require(float(values.min()) + 1e-6 >= required_clearance, 'trajectory violates obstacle clearance')
         minimum_clearance = min(minimum_clearance, float(values.min()))
         # Rasterize each actual spatial segment, including conservative coarse paths.
@@ -141,13 +144,14 @@ def main():
     require(idle == expected['idle_robots'], 'unexpected idle robots')
     require(merged >= expected['minimum_merged_stops'], 'too few merged stops')
     require(total_wait_ticks == plan['coordination']['total_wait_ticks'], 'coordination wait total differs')
-    require(total_wait_ticks > 0, 'benchmark must exercise actual coordination waiting')
+    if not args.allow_zero_waits:
+        require(total_wait_ticks > 0, 'benchmark must exercise actual coordination waiting')
     minimum_separation = float('inf')
     pairs = 0
     for a in range(len(schedules)):
         for b in range(a + 1, len(schedules)):
             ra, rb = robots[per_robot[a]['robot']], robots[per_robot[b]['robot']]
-            threshold = ra['footprint_radius_m'] + rb['footprint_radius_m'] + ra['safety_margin_m'] + rb['safety_margin_m']
+            threshold = sum(r.get('footprint_radius_m', 0) + r.get('safety_margin_m', 0) for r in (ra, rb))
             delta = schedules[a] - schedules[b]
             vertex = np.linalg.norm(delta, axis=1)
             require(float(vertex.min()) > threshold + 1e-9, 'vertex/footprint conflict')
@@ -175,26 +179,32 @@ def main():
             aa = np.vstack((baseline[a], np.repeat(baseline[a][-1:], length - len(baseline[a]), axis=0)))
             bb = np.vstack((baseline[b], np.repeat(baseline[b][-1:], length - len(baseline[b]), axis=0)))
             ra, rb = robots[per_robot[a]['robot']], robots[per_robot[b]['robot']]
-            threshold = ra['footprint_radius_m'] + rb['footprint_radius_m'] + ra['safety_margin_m'] + rb['safety_margin_m']
+            threshold = sum(r.get('footprint_radius_m', 0) + r.get('safety_margin_m', 0) for r in (ra, rb))
             baseline_unsafe_ticks += int((np.linalg.norm(aa - bb, axis=1) <= threshold + 1e-9).sum())
-    require(baseline_unsafe_ticks > 0, 'uncoordinated baseline should contain conflicts')
+    if not args.allow_zero_waits:
+        require(baseline_unsafe_ticks > 0, 'uncoordinated baseline should contain conflicts')
     gif_path = output / 'routes_overall.gif'
-    gif = Image.open(gif_path)
-    require(gif.size[0] == config['export']['animation_width'], 'GIF width incorrect')
-    require(2 <= gif.n_frames <= config['export']['animation_max_frames'], 'GIF frame limit violated')
-    require(gif.info.get('loop') == 0, 'GIF must loop')
     duration = 0
     amber_frames = 0
-    for frame_index in range(gif.n_frames):
-        gif.seek(frame_index)
-        gif.load()
-        duration += gif.info['duration']
-        rgb = np.array(gif.convert('RGB'))
-        # Exclude header/sidebar; look for actual wait halos over the map.
-        map_pixels = rgb[125:, :gif.size[0] - 300]
-        amber_frames += bool(np.any(np.all(map_pixels == [255, 153, 0], axis=2)))
-    require(gif.info['duration'] == 1000, 'GIF final-frame pause missing')
-    require(amber_frames > 0, 'GIF does not show coordination wait halos')
+    gif_result = None
+    if not args.skip_gif:
+        gif = Image.open(gif_path)
+        require(gif.size[0] == config['export']['animation_width'], 'GIF width incorrect')
+        require(2 <= gif.n_frames <= config['export']['animation_max_frames'], 'GIF frame limit violated')
+        require(gif.info.get('loop') == 0, 'GIF must loop')
+        for frame_index in range(gif.n_frames):
+            gif.seek(frame_index)
+            gif.load()
+            duration += gif.info['duration']
+            rgb = np.array(gif.convert('RGB'))
+            # Exclude header/sidebar; look for actual wait halos over the map.
+            map_pixels = rgb[125:, :gif.size[0] - 300]
+            amber_frames += bool(np.any(np.all(map_pixels == [255, 153, 0], axis=2)))
+        require(gif.info['duration'] == 1000, 'GIF final-frame pause missing')
+        if total_wait_ticks:
+            require(amber_frames > 0, 'GIF does not show coordination wait halos')
+        gif_result = {'pixels': gif.size, 'frames': gif.n_frames, 'seconds': duration / 1000,
+                      'bytes': gif_path.stat().st_size, 'frames_with_wait_halo': amber_frames}
     times = {}
     if args.run_log:
         for line in args.run_log.read_text().splitlines():
@@ -217,8 +227,7 @@ def main():
         'makespan_seconds': round((horizon - 1) * plan['time_step_seconds'], 3),
         'total_wait_seconds': round(total_wait_ticks * plan['time_step_seconds'], 3),
         'per_robot': per_robot,
-        'gif': {'pixels': gif.size, 'frames': gif.n_frames, 'seconds': duration / 1000,
-                'bytes': gif_path.stat().st_size, 'frames_with_wait_halo': amber_frames},
+        'gif': gif_result,
         'runtime': times,
     }
     (output / 'validation.json').write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n')
